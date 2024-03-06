@@ -11,5 +11,18 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "ipython",
+    "ipdb",
+    "pytest",
+    "ruff",
+]
+
 [tool.maturin]
 features = ["pyo3/extension-module"]
+
+[tool.pytest]
+testpaths = ["tests"]
+addopts = ["-v", "-s"]

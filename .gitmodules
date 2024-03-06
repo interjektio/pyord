@@ -1,0 +1,3 @@
+[submodule "submodules/ord"]
+	path = submodules/ord
+	url = https://github.com/ordinals/ord.git

@@ -13,25 +13,25 @@ pub struct PyRune(pub Rune);
 #[pymethods]
 impl PyRune {
     #[new]
-    fn new(num: u128) -> Self {
+    pub fn new(num: u128) -> Self {
         PyRune(Rune(num))
     }
 
     /// the number (id) of the rune
     /// :rtype: int
     #[getter]
-    fn num(&self) -> u128 {
+    pub fn num(&self) -> u128 {
         self.0 .0
     }
 
     /// the name of the rune as string
     /// :rtype: str
     #[getter]
-    fn name(&self) -> String {
+    pub fn name(&self) -> String {
         self.0.to_string()
     }
 
-    fn __repr__(&self) -> String {
+    pub fn __repr__(&self) -> String {
         format!("Rune(num={}, name='{}')", self.num(), self.name())
     }
 
@@ -40,7 +40,7 @@ impl PyRune {
     /// :type s: str
     /// :rtype: Rune
     #[staticmethod]
-    fn from_str(s: &str) -> Self {
+    pub fn from_str(s: &str) -> Self {
         Self(s.parse::<Rune>().unwrap())
     }
 }

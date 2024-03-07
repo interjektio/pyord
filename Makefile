@@ -37,10 +37,29 @@ submodules/ord/Cargo.toml:
 # TODO: figure out a better way. Right now, we will constantly have a dirty (files changed) submodule in the repository.
 .PHONY: update-and-patch-ord
 update-and-patch-ord:
-	cd submodules/ord && \
+	git submodule update --init && \
+		cd submodules/ord && \
 		export COMMIT_HASH=$$(git rev-parse HEAD) && \
-		git stash && \
+		git reset --hard HEAD && \
 		git pull && \
 		(pushd .. && git add ord && popd) && \
-		git apply ../../ord.patch && \
+		(git apply ../../ord.patch || (\
+			echo "Failed to re-patch ord, restoring to $COMMIT_HASH" && \
+			git reset --hard $COMMIT_HASH && \
+			exit 1 \
+		)) && \
+  		echo "Patch successful" && \
 		git diff --patch > ../../ord.patch && cd ../../ && git add ord.patch
+
+
+.PHONY: create-ord-patch
+create-ord-patch:
+	cd submodules/ord && \
+		git diff --patch > ../../ord.patch
+
+
+.PHONY: patch-ord
+patch-ord:
+	cd submodules/ord && \
+		git reset --hard HEAD && \
+		git apply ../../ord.patch

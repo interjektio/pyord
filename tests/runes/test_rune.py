@@ -43,5 +43,14 @@ U128_MAX = 2**128 - 1
     ]
 )
 def test_round_trip(n: int, s: str):
-    assert pyord.rune(n) == s
+    a = pyord.Rune(n)
+    assert a.name == s
+    assert a.num == n
+    b = pyord.Rune.from_str(s)
+    assert b.name == s
+    assert b.num == n
+    if n != U128_MAX:
+        assert a != pyord.Rune(n + 1)
+    if n != 0:
+        assert a != pyord.Rune(n - 1)
 

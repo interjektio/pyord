@@ -7,7 +7,7 @@ use pyo3::prelude::*;
 fn pyord(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add("__package__", "pyord")?;
 
-    m.add_function(wrap_pyfunction!(runes::rune, m)?)?;
+    runes::register(m)?;
 
     Ok(())
 }

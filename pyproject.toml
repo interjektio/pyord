@@ -23,6 +23,6 @@ dev = [
 [tool.maturin]
 features = ["pyo3/extension-module"]
 
-[tool.pytest]
+[tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = ["-v", "-s"]
+addopts = ["-s"]

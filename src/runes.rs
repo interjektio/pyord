@@ -11,8 +11,10 @@ pub fn register(m: &PyModule) -> PyResult<()> {
     m.add_class::<rune::PyRune>()?;
     m.add_class::<runestone::PyRunestone>()?;
     m.add_class::<edict::PyEdict>()?;
-    // NOTE: these are not exposed by ord
-    //m.add_class::<mint::PyMint>()?;
-    //m.add_class::<etching::PyEtching>()?;
+
+    // NOTE: mint and etching are not exposed by Ord
+    m.add_class::<mint::PyMint>()?;
+    m.add_class::<etching::PyEtching>()?;
+
     Ok(())
 }

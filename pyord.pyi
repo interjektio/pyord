@@ -12,6 +12,27 @@ class Edict:
         """Return repr(self)."""
 
 @typing.final
+class Etching:
+    divisibility: int
+    mint: typing.Optional[Mint]
+    rune: typing.Optional[Rune]
+    spacers: int
+    symbol: typing.Optional[str]
+
+    def __init__(self, /, divisibility: int, spacers: int, mint: typing.Optional[Mint]=None, rune: typing.Optional[Rune]=None, symbol: typing.Optional[str]=None) -> None:...
+
+@typing.final
+class Mint:
+    deadline: typing.Optional[int]
+    limit: typing.Optional[int]
+    term: typing.Optional[int]
+
+    def __init__(self, /, deadline: typing.Optional[int]=None, limit: typing.Optional[int]=None, term: typing.Optional[int]=None) -> None:...
+
+    def __repr__(self, /) -> str:
+        """Return repr(self)."""
+
+@typing.final
 class Rune:
     """Rune
 :param num: The rune number"""

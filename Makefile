@@ -7,12 +7,12 @@ PYTEST := venv/bin/pytest
 RUSTSOURCES := $(shell find src -name '*.rs')
 
 
-.PHONY: build
-build: venv/lib/python3.10/site-packages/pyord/__init__.py
+.PHONY: develop
+develop: venv/lib/python3.10/site-packages/pyord/__init__.py
 
 
 .PHONY: test
-test: build
+test: develop
 	$(PYTEST)
 
 

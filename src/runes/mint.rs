@@ -1,12 +1,20 @@
 use pyo3::prelude::*;
 
-#[pyclass]
+/// :type deadline: typing.Optional[int], optional
+/// :type limit: typing.Optional[int], optional
+/// :type term: typing.Optional[int], optional
+#[pyclass(name="Mint")]
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PyMint {
+    /// :rtype: typing.Optional[int]
     #[pyo3(get)]
     pub deadline: Option<u32>,
+
+    /// :rtype: typing.Optional[int]
     #[pyo3(get)]
     pub limit: Option<u128>,
+
+    /// :rtype: typing.Optional[int]
     #[pyo3(get)]
     pub term: Option<u32>,
 }

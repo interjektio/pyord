@@ -2,12 +2,26 @@ use bitcoin::blockdata::transaction::Transaction;
 use bitcoin::consensus::Decodable;
 use bitcoin::consensus::encode::serialize_hex;
 use hex;
+use pyo3::exceptions::PyValueError;
+use pyo3::prelude::*;
 
-pub(crate) fn hex_to_bitcoin_tx(hex_tx: &str) -> Transaction {
-    // TODO: error handling maybe. Right now we just bubble everything
-    let decoded = hex::decode(hex_tx).unwrap();
-    let tx: Transaction = Decodable::consensus_decode(&mut decoded.as_slice()).unwrap();
-    tx
+pub(crate) fn hex_to_bitcoin_tx(hex_tx: &str) -> PyResult<Transaction> {
+    let decoded = hex::decode(hex_tx);
+    let decoded = match decoded {
+        Ok(d) => d,
+        Err(e) => return Err(PyValueError::new_err(format!("Error decoding hex: {}", e))),
+    };
+    match Decodable::consensus_decode(&mut decoded.as_slice()) {
+        Ok(tx) => Ok(tx),
+        Err(e) => Err(
+            PyValueError::new_err(
+                format!(
+                    "Error decoding transaction: {}",
+                    e
+                )
+            )
+        ),
+    }
 }
 
 #[allow(unused)]
@@ -23,7 +37,7 @@ mod test {
 
     #[test]
     fn round_trip() {
-        let tx = hex_to_bitcoin_tx(SOME_TX);
+        let tx = hex_to_bitcoin_tx(SOME_TX)?;
         println!("{:?}", tx);
         assert_eq!(tx.version, 1);
         assert_eq!(tx.input.len(), 1);

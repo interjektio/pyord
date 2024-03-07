@@ -1,10 +1,12 @@
 use pyo3::prelude::*;
+use pyo3::types::PyBytes;
 
 use ord::runes::Runestone;
 
+use crate::utils::hex_to_bitcoin_tx;
+
 use super::edict::PyEdict;
 use super::etching::PyEtching;
-use crate::utils::hex_to_bitcoin_tx;
 
 /// Runestone
 /// :type burn: bool, optional
@@ -22,17 +24,17 @@ impl PyRunestone {
     #[new]
     #[pyo3(text_signature = "(burn=False, edicts=(), claim=None, default_output=None, etching=None)")]
     pub fn new(
-        burn: bool,
-        edicts: Vec<PyEdict>,
+        burn: Option<bool>,
+        edicts: Option<Vec<PyEdict>>,
         claim: Option<u128>,
         default_output: Option<u32>,
         etching: Option<PyEtching>,
     ) -> Self {
         PyRunestone(Runestone {
-            burn,
+            burn: burn.unwrap_or(false),
             claim,
             default_output,
-            edicts: edicts.into_iter().map(|e| e.0).collect(),
+            edicts: edicts.unwrap_or_default().into_iter().map(|e| e.0).collect(),
             etching: etching.map(|e| e.0),
         })
     }
@@ -42,9 +44,16 @@ impl PyRunestone {
     /// :type hex_tx: str
     /// :rtype: typing.Optional[Runestone]
     #[staticmethod]
-    pub fn from_hex_tx(hex_tx: &str) -> Option<Self> {
-        let tx = hex_to_bitcoin_tx(hex_tx);
-        Runestone::from_transaction(&tx).map(|r| PyRunestone(r))
+    pub fn from_hex_tx(hex_tx: &str) -> PyResult<Option<Self>> {
+        let tx = hex_to_bitcoin_tx(hex_tx)?;
+        Ok(Runestone::from_transaction(&tx).map(|r| PyRunestone(r)))
+    }
+
+    /// get the scriptPubKey of the Runestone
+    /// :rtype: bytes
+    pub fn script_pubkey(&self, py: Python) -> PyObject {
+        let buffer = self.0.encipher().into_bytes();
+        PyBytes::new(py, &buffer).into()
     }
 
     pub fn __repr__(&self) -> String {
@@ -53,8 +62,15 @@ impl PyRunestone {
             self.burn(),
             self.claim().map(|d| d.to_string()).unwrap_or("None".to_string()),
             self.default_output().map(|d| d.to_string()).unwrap_or("None".to_string()),
-            self.edicts().len(),
+            format!(
+                "[{}]",
+                self.edicts().iter().map(|e| e.__repr__()).collect::<Vec<String>>().join(", ")
+            ),
         )
+    }
+
+    pub fn __eq__(&self, other: &PyRunestone) -> bool {
+        self.0 == other.0
     }
 
     /// :rtype: bool

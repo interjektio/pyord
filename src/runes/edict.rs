@@ -13,7 +13,7 @@ pub struct PyEdict(pub Edict);
 #[pymethods]
 impl PyEdict {
     #[new]
-    fn new(
+    pub fn new(
         id: u128,
         amount: u128,
         output: u128,
@@ -25,25 +25,25 @@ impl PyEdict {
         })
     }
 
-    fn __repr__(&self) -> String {
+    pub fn __repr__(&self) -> String {
         format!("Edict(id={}, amount={}, output={})", self.id(), self.amount(), self.output())
     }
 
     /// :rtype: int
     #[getter]
-    fn id(&self) -> u128 {
+    pub fn id(&self) -> u128 {
         self.0.id
     }
 
     /// :rtype: int
     #[getter]
-    fn amount(&self) -> u128 {
+    pub fn amount(&self) -> u128 {
         self.0.amount
     }
 
     /// :rtype: int
     #[getter]
-    fn output(&self) -> u128 {
+    pub fn output(&self) -> u128 {
         self.0.output
     }
 }

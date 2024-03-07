@@ -71,5 +71,26 @@ class Runestone:
         """Return a Runestone from a Bitcoin transaction, or None if the transaction contains no
 Runestone"""
 
+    def script_pubkey(self, /) -> bytes:
+        """get the scriptPubKey of the Runestone"""
+
+    def __eq__(self, value: typing.Any, /) -> bool:
+        """Return self==value."""
+
+    def __ge__(self, value: typing.Any, /) -> bool:
+        """Return self>=value."""
+
+    def __gt__(self, value: typing.Any, /) -> bool:
+        """Return self>value."""
+
+    def __le__(self, value: typing.Any, /) -> bool:
+        """Return self<=value."""
+
+    def __lt__(self, value: typing.Any, /) -> bool:
+        """Return self<value."""
+
+    def __ne__(self, value: typing.Any, /) -> bool:
+        """Return self!=value."""
+
     def __repr__(self, /) -> str:
         """Return repr(self)."""

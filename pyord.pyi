@@ -63,5 +63,10 @@ class Runestone:
     def __init__(self, /, burn: bool=False, edicts: typing.Iterable[Edict]=(), claim: typing.Optional[int]=None, default_output: typing.Optional[int]=None) -> None:
         """Runestone"""
 
+    @staticmethod
+    def from_hex_tx(hex_tx: str) -> typing.Optional[Runestone]:
+        """Return a Runestone from a Bitcoin transaction, or None if the transaction contains no
+Runestone"""
+
     def __repr__(self, /) -> str:
         """Return repr(self)."""

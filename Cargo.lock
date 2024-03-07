@@ -2311,6 +2311,8 @@ dependencies = [
 name = "pyord"
 version = "0.1.0"
 dependencies = [
+ "bitcoin",
+ "hex",
  "ord",
  "pyo3",
 ]

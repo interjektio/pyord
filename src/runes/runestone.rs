@@ -6,6 +6,7 @@ use super::edict::PyEdict;
 use super::etching::PyEtching;
 use super::mint::PyMint;
 use super::rune::PyRune;
+use crate::utils::hex_to_bitcoin_tx;
 
 /// Runestone
 /// :type burn: bool, optional
@@ -38,11 +39,15 @@ impl PyRunestone {
         })
     }
 
-    // #[staticmethod]
-    // fn from_serialized_transaction(serialized_transaction: &str) -> Self {
-    //
-    //     PyRunestone(Runestone::from_transaction(tx))
-    // }
+    /// Return a Runestone from a Bitcoin transaction, or None if the transaction contains no
+    /// Runestone
+    /// :type hex_tx: str
+    /// :rtype: typing.Optional[Runestone]
+    #[staticmethod]
+    fn from_hex_tx(hex_tx: &str) -> Option<Self> {
+        let tx = hex_to_bitcoin_tx(hex_tx);
+        Runestone::from_transaction(&tx).map(|r| PyRunestone(r))
+    }
 
     fn __repr__(&self) -> String {
         format!(

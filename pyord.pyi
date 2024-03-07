@@ -21,6 +21,9 @@ class Etching:
 
     def __init__(self, /, divisibility: int, spacers: int, mint: typing.Optional[Mint]=None, rune: typing.Optional[Rune]=None, symbol: typing.Optional[str]=None) -> None:...
 
+    def __repr__(self, /) -> str:
+        """Return repr(self)."""
+
 @typing.final
 class Mint:
     deadline: typing.Optional[int]
@@ -60,7 +63,7 @@ class Runestone:
     edicts: typing.List[Edict]
     etching: typing.Optional[Etching]
 
-    def __init__(self, /, burn: bool=False, edicts: typing.Iterable[Edict]=(), claim: typing.Optional[int]=None, default_output: typing.Optional[int]=None) -> None:
+    def __init__(self, /, burn: bool=False, edicts: typing.Iterable[Edict]=(), claim: typing.Optional[int]=None, default_output: typing.Optional[int]=None, etching: typing.Optional[Etching]=None) -> None:
         """Runestone"""
 
     @staticmethod

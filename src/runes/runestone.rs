@@ -11,6 +11,7 @@ use crate::utils::hex_to_bitcoin_tx;
 /// :type claim: typing.Optional[int], optional
 /// :type default_output: typing.Optional[int], optional
 /// :type edicts: typing.Iterable[Edict], optional
+/// :type etching: typing.Optional[Etching], optional
 #[pyclass(name="Runestone")]
 #[derive(Debug, PartialEq)]
 pub struct PyRunestone(pub Runestone);

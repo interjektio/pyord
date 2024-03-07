@@ -32,3 +32,15 @@ $(PYTHON):
 
 submodules/ord/Cargo.toml:
 	$(GIT) submodule update --init --recursive
+
+
+# TODO: figure out a better way. Right now, we will constantly have a dirty (files changed) submodule in the repository.
+.PHONY: update-and-patch-ord
+update-and-patch-ord:
+	cd submodules/ord && \
+		export COMMIT_HASH=$$(git rev-parse HEAD) && \
+		git stash && \
+		git pull && \
+		(pushd .. && git add ord && popd) && \
+		git apply ../../ord.patch && \
+		git diff --patch > ../../ord.patch && cd ../../ && git add ord.patch

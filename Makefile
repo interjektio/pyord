@@ -5,6 +5,7 @@ PYTHON := venv/bin/python
 MATURIN := venv/bin/maturin
 PYTEST := venv/bin/pytest
 RUSTSOURCES := $(shell find src -name '*.rs')
+ORDSOURCES := $(shell find submodules/ord -name '*.rs')
 
 
 .PHONY: develop
@@ -16,7 +17,7 @@ test: develop
 	$(PYTEST)
 
 
-venv/lib/python3.10/site-packages/pyord/__init__.py: $(RUSTSOURCES) Cargo.toml Cargo.lock | $(PYTHON)
+venv/lib/python3.10/site-packages/pyord/__init__.py: $(RUSTSOURCES) $(ORDSOURCES) Cargo.toml Cargo.lock | $(PYTHON)
 	$(MATURIN) develop
 	@# NOTE: maturin includes the .pyi file in the built module, but to generate it, we need to have the module there
 	@# in the first place. So we would need another build after this to build the distribution correctly.

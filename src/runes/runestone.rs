@@ -53,6 +53,7 @@ impl PyRunestone {
     /// :rtype: bytes
     pub fn script_pubkey(&self, py: Python) -> PyObject {
         let buffer = self.0.encipher().into_bytes();
+        // TODO: check that this doesn't leak memory
         PyBytes::new(py, &buffer).into()
     }
 

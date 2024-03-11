@@ -1,5 +1,5 @@
 from pyord import Runestone, Edict
-from bitcointx.core.script import CScript
+from bitcointx.core.script import CScript, OP_RETURN, CScriptOp
 from bitcointx.core import CTransaction, CTxOut, CTxIn, COutPoint
 
 
@@ -9,6 +9,25 @@ TX_WITHOUT_RUNESTONE = "0100000001a15d57094aa7a21a28cb20b59aab8fc7d1149a3bdbcddb
 def test_from_hex_tx_without_runestone():
     r = Runestone.from_hex_tx(TX_WITHOUT_RUNESTONE)
     assert r is None
+
+
+def test_script_pubkey():
+    runestone = Runestone(
+        edicts=[
+            Edict(
+                id=123,
+                amount=1000,
+                output=0,
+            )
+        ]
+    )
+    script_pubkey = runestone.script_pubkey()
+    assert isinstance(script_pubkey, bytes)
+    script_pubkey = CScript(script_pubkey)
+    parts = list(script_pubkey.raw_iter())
+    assert len(parts) == 3
+    assert parts[0] == (OP_RETURN, None, 0)
+    assert parts[1] == (CScriptOp(0x9), b'RUNE_TEST', 1)  # NOTE: RUNE_TEST is expected to change
 
 
 def test_script_pubkey_round_trip():
@@ -22,7 +41,6 @@ def test_script_pubkey_round_trip():
         ]
     )
     script_pubkey = runestone.script_pubkey()
-    assert isinstance(script_pubkey, bytes)
     tx = CTransaction(
         vin=[
             CTxIn(

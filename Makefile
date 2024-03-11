@@ -72,3 +72,7 @@ patch-ord:
 .PHONY: init-submodules
 init-submodules:
 	git submodule update --init --recursive
+
+.PHONY: build-linux-wheels
+build-linux-wheels:
+	docker run --rm -it -v $(shell pwd):/io $(shell docker build -q -f Dockerfile.build .) build --release

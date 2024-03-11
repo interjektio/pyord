@@ -55,6 +55,46 @@ class Rune:
         """Return repr(self)."""
 
 @typing.final
+class RuneId:
+    """RuneId
+:param height: Etching block height
+:param index: Etching transaction index"""
+    height: int
+    index: int
+    num: int
+    'number suitable for use as Edict id'
+
+    def __init__(self, /, height: int, index: int) -> None:
+        """RuneId
+:param height: Etching block height
+:param index: Etching transaction index"""
+
+    @staticmethod
+    def from_num(num: int) -> RuneId:
+        """Parse the RuneId from a number usable as Edict id"""
+
+    def __eq__(self, value: typing.Any, /) -> bool:
+        """Return self==value."""
+
+    def __ge__(self, value: typing.Any, /) -> bool:
+        """Return self>=value."""
+
+    def __gt__(self, value: typing.Any, /) -> bool:
+        """Return self>value."""
+
+    def __le__(self, value: typing.Any, /) -> bool:
+        """Return self<=value."""
+
+    def __lt__(self, value: typing.Any, /) -> bool:
+        """Return self<value."""
+
+    def __ne__(self, value: typing.Any, /) -> bool:
+        """Return self!=value."""
+
+    def __repr__(self, /) -> str:
+        """Return repr(self)."""
+
+@typing.final
 class Runestone:
     """Runestone"""
     burn: bool

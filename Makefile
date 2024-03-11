@@ -11,6 +11,10 @@ ORDSOURCES := $(shell find submodules/ord -name '*.rs')
 .PHONY: develop
 develop: venv/lib/python3.10/site-packages/pyord/__init__.py
 
+.PHONY: build
+build: develop
+	$(MATURIN) build
+
 
 .PHONY: test
 test: develop
@@ -63,3 +67,8 @@ patch-ord:
 	cd submodules/ord && \
 		git reset --hard HEAD && \
 		git apply ../../ord.patch
+
+
+.PHONY: init-submodules
+init-submodules:
+	git submodule update --init --recursive

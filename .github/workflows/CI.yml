@@ -47,6 +47,7 @@ jobs:
       - uses: docker/build-push-action@v4
         if: steps.changes.outputs.dockerfile == 'true'
         with:
+          file: Dockerfile.build
           context: .
           push: true
           cache-from: type=registry,ref=ghcr.io/interjektio/pyord-builder:latest

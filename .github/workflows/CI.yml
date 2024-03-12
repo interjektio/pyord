@@ -84,6 +84,7 @@ jobs:
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
+          command: build
           container: ghcr.io/interjektio/pyord-builder:latest
           args: --release -i python3.10
           sccache: 'true'

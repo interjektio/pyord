@@ -82,4 +82,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build wheels
-        run: docker run --rm -it -v $(pwd):/io ghcr.io/interjektio/pyord-builder:latest build --release
+        run: docker run --rm -v $(pwd):/io ghcr.io/interjektio/pyord-builder:latest build --release

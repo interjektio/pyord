@@ -22,6 +22,7 @@ jobs:
 
     permissions:
       packages: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -58,6 +59,7 @@ jobs:
 
     permissions:
       packages: write
+      contents: read
 
     needs: build-the-linux-builder
 

@@ -76,3 +76,7 @@ init-submodules:
 .PHONY: build-linux-wheels
 build-linux-wheels:
 	docker run --rm -it -v $(shell pwd):/io $(shell docker build -q -f Dockerfile.build .) build --release
+
+.PHONY: publish-linux-wheels
+publish-linux-wheels:
+	docker run --rm -it -v $(shell pwd):/io $(shell docker build -q -f Dockerfile.build .) publish

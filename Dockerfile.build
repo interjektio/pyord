@@ -1,5 +1,6 @@
 FROM ghcr.io/pyo3/maturin:latest
 
+# Required for building the package
 RUN yum -y update && yum -y install \
     openssl-devel \
     && rm -rf /var/lib/apt/lists/*

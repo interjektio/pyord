@@ -83,3 +83,9 @@ jobs:
 
       - name: Build wheels
         run: docker run --rm -v $(pwd):/io ghcr.io/interjektio/pyord-builder:latest build --release
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-package-distributions
+          path: target/wheels/*.whl

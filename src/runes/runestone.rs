@@ -12,10 +12,10 @@ use super::rune_id::PyRuneId;
 use super::cenotaph::PyCenotaph;
 
 /// Runestone
-/// :type edicts: typing.Optional[typing.Iterable[Edict]], optional
-/// :type etching: typing.Optional[Etching], optional
-/// :type mint: typing.Optional[RuneId], optional
-/// :type pointer: typing.Optional[int], optional
+/// :type edicts: typing.Optional[typing.Iterable[Edict]]
+/// :type etching: typing.Optional[Etching]
+/// :type mint: typing.Optional[RuneId]
+/// :type pointer: typing.Optional[int]
 #[pyclass(name="Runestone")]
 #[derive(Debug, PartialEq)]
 pub struct PyRunestone(pub Runestone);

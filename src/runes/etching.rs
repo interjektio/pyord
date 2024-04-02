@@ -4,12 +4,12 @@ use ordinals::Etching;
 use super::terms::PyTerms;
 use super::rune::PyRune;
 
-/// :type divisibility: typing.Optional[int], optional
-/// :type premine: typing.Optional[int], optional
-/// :type rune: typing.Optional[Rune], optional
-/// :type spacers: typing.Optional[int], optional
-/// :type symbol: typing.Optional[str], optional
-/// :type terms: typing.Optional[Terms], optional
+/// :type divisibility: typing.Optional[int]
+/// :type premine: typing.Optional[int]
+/// :type rune: typing.Optional[Rune]
+/// :type spacers: typing.Optional[int]
+/// :type symbol: typing.Optional[str]
+/// :type terms: typing.Optional[Terms]
 #[pyclass(name="Etching")]
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PyEtching(pub Etching);

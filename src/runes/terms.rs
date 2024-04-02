@@ -1,10 +1,10 @@
 use pyo3::prelude::*;
 use ordinals::Terms;
 
-/// :type amount: typing.Optional[int], optional
-/// :type cap: typing.Optional[int], optional
-/// :type height: tuple[typing.Optional[int], typing.Optional[int]], optional
-/// :type offset: tuple[typing.Optional[int], typing.Optional[int]], optional
+/// :type amount: typing.Optional[int]
+/// :type cap: typing.Optional[int]
+/// :type height: tuple[typing.Optional[int], typing.Optional[int]]
+/// :type offset: tuple[typing.Optional[int], typing.Optional[int]]
 #[pyclass(name="Terms")]
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PyTerms(pub Terms);

@@ -1,13 +1,13 @@
 use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
 
-use ord::runes::RuneId;
+use ordinals::{RuneId};
 
 /// RuneId
-/// :param height: Etching block height
-/// :type height: int
-/// :param index: Etching transaction index
-/// :type index: int
+/// :param block: Etching block height
+/// :type block: int
+/// :param tx: Etching transaction index
+/// :type tx: int
 #[pyclass(name="RuneId")]
 #[derive(Debug, PartialEq, Copy, Clone, Hash, PartialOrd, Ord, Eq)]
 pub struct PyRuneId(pub RuneId);
@@ -15,8 +15,8 @@ pub struct PyRuneId(pub RuneId);
 #[pymethods]
 impl PyRuneId {
     #[new]
-    pub fn new(height: u32, index: u16) -> Self {
-        PyRuneId(RuneId { height, index })
+    pub fn new(block: u64, tx: u32) -> Self {
+        PyRuneId(RuneId { block, tx })
     }
 
     pub fn __eq__(&self, other: Self) -> bool {
@@ -25,36 +25,41 @@ impl PyRuneId {
 
     /// :rtype: str
     pub fn __repr__(&self) -> String {
-        format!("RuneId(height={}, index={})", self.0.height, self.0.index)
+        format!("RuneId(block={}, tx={})", self.0.block, self.0.tx)
     }
 
-    /// Parse the RuneId from a number usable as Edict id
-    /// :type num: int
+    /// Parse the RuneId from a string "block:tx"
+    /// :param s: block height and tx separated by a colon
+    /// :type s: str
     /// :rtype: RuneId
     #[staticmethod]
-    pub fn from_num(num: u128) -> PyResult<Self> {
-        RuneId::try_from(num)
-            .map(|rune_id| Ok(PyRuneId(rune_id)))
-            .unwrap_or_else(|_| Err(PyValueError::new_err("Invalid RuneId")))
+    pub fn from_str(s: &str) -> PyResult<Self> {
+        s.parse::<RuneId>().map(Self).map_err(|_| PyValueError::new_err("Invalid RuneId"))
     }
 
-
-    /// :rtype: int
-    /// :return: number suitable for use as Edict id
-    #[getter]
-    pub fn num(&self) -> u128 {
-        self.0.into()
+    /// :type next: RuneId
+    /// :rtype: typing.Optional[typing.Tuple[int, int]]
+    pub fn delta(&self, next: PyRuneId) -> Option<(u128, u128)> {
+        let (block, tx) = self.0.delta(next.0)?;
+        Some((block, tx))
     }
 
-    /// :rtype: int
-    #[getter]
-    pub fn height(&self) -> u32 {
-        self.0.height
+    /// :type block: int
+    /// :type tx: int
+    /// :rtype: typing.Optional[RuneId]
+    pub fn next(&self, block: u128, tx: u128) -> Option<Self> {
+        self.0.next(block, tx).map(Self)
     }
 
     /// :rtype: int
     #[getter]
-    pub fn index(&self) -> u16 {
-        self.0.index
+    pub fn block(&self) -> u64 {
+        self.0.block
+    }
+
+    /// :rtype: int
+    #[getter]
+    pub fn tx(&self) -> u32 {
+        self.0.tx
     }
 }

@@ -1,5 +1,5 @@
-from pyord import Runestone, Edict
-from bitcointx.core.script import CScript, OP_RETURN, CScriptOp
+from pyord import Runestone, Edict, RuneId, Cenotaph
+from bitcointx.core.script import CScript, OP_RETURN, OP_13
 from bitcointx.core import CTransaction, CTxOut, CTxIn, COutPoint
 
 
@@ -7,40 +7,42 @@ TX_WITHOUT_RUNESTONE = "0100000001a15d57094aa7a21a28cb20b59aab8fc7d1149a3bdbcddb
 
 
 def test_from_hex_tx_without_runestone():
-    r = Runestone.from_hex_tx(TX_WITHOUT_RUNESTONE)
+    r = Runestone.decipher_hex(TX_WITHOUT_RUNESTONE)
     assert r is None
 
 
-def test_script_pubkey():
+def test_encipher():
     runestone = Runestone(
         edicts=[
             Edict(
-                id=123,
+                id=RuneId(123, 4),
                 amount=1000,
                 output=0,
             )
         ]
     )
-    script_pubkey = runestone.script_pubkey()
+    script_pubkey = runestone.encipher()
     assert isinstance(script_pubkey, bytes)
     script_pubkey = CScript(script_pubkey)
     parts = list(script_pubkey.raw_iter())
     assert len(parts) == 3
     assert parts[0] == (OP_RETURN, None, 0)
-    assert parts[1] == (CScriptOp(0x9), b'RUNE_TEST', 1)  # NOTE: RUNE_TEST is expected to change
+    assert parts[1] == (OP_13, None, 1)  # NOTE: OP_13 expected to change
 
 
-def test_script_pubkey_round_trip():
+def test_encipher_round_trip():
     runestone = Runestone(
         edicts=[
             Edict(
-                id=123,
+                id=RuneId(123, 4),
                 amount=1000,
                 output=0,
             )
         ]
     )
-    script_pubkey = runestone.script_pubkey()
+    assert not runestone.is_cenotaph
+
+    script_pubkey = runestone.encipher()
     tx = CTransaction(
         vin=[
             CTxIn(
@@ -59,5 +61,46 @@ def test_script_pubkey_round_trip():
         ],
     )
     tx_hex = tx.serialize().hex()
-    runestone2 = Runestone.from_hex_tx(tx_hex)
+    runestone2 = Runestone.decipher_hex(tx_hex)
+    assert not runestone2.is_cenotaph
+    assert isinstance(runestone2, Runestone)
     assert runestone == runestone2
+
+
+def test_decipher_hex_cenotaph():
+    runestone = Runestone(
+        edicts=[
+            Edict(
+                id=RuneId(123, 4),
+                amount=1000,
+                # The tx below has only one output so this will produce a cenotaph
+                # TODO: output=1 produces a valid runestone but this is weird, first output should be 0, right?
+                output=2,
+            )
+        ]
+    )
+    script_pubkey = runestone.encipher()
+    tx = CTransaction(
+        vin=[
+            CTxIn(
+                prevout=COutPoint(
+                    hash=b'\x00' * 32,
+                    n=0
+                ),
+                scriptSig=CScript()
+            )
+        ],
+        vout=[
+            CTxOut(
+                nValue=10000,
+                scriptPubKey=CScript(script_pubkey),
+            )
+        ],
+    )
+    tx_hex = tx.serialize().hex()
+    runestone_or_cenotaph = Runestone.decipher_hex(tx_hex)
+    assert isinstance(runestone_or_cenotaph, Cenotaph)
+    assert runestone_or_cenotaph.is_cenotaph
+    assert len(runestone_or_cenotaph.flaws) == 1
+    assert runestone_or_cenotaph.flaws[0].reason == "edict output greater than transaction output count"
+    assert runestone != runestone_or_cenotaph

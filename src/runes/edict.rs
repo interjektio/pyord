@@ -1,8 +1,9 @@
 use pyo3::prelude::*;
 
-use ord::runes::Edict;
+use ordinals::Edict;
+use super::rune_id::PyRuneId;
 
-/// :type id: int
+/// :type id: RuneId
 /// :type amount: int
 /// :type output: int
 #[pyclass(name="Edict")]
@@ -14,25 +15,30 @@ pub struct PyEdict(pub Edict);
 impl PyEdict {
     #[new]
     pub fn new(
-        id: u128,
+        id: PyRuneId,
         amount: u128,
-        output: u128,
+        output: u32,
     ) -> Self {
         PyEdict(Edict {
-            id,
+            id: id.0,
             amount,
             output,
         })
     }
 
     pub fn __repr__(&self) -> String {
-        format!("Edict(id={}, amount={}, output={})", self.id(), self.amount(), self.output())
+        format!(
+            "Edict(id={}, amount={}, output={})",
+            self.id().__repr__(),
+            self.amount(),
+            self.output()
+        )
     }
 
-    /// :rtype: int
+    /// :rtype: RuneId
     #[getter]
-    pub fn id(&self) -> u128 {
-        self.0.id
+    pub fn id(&self) -> PyRuneId {
+        PyRuneId(self.0.id)
     }
 
     /// :rtype: int
@@ -43,7 +49,7 @@ impl PyEdict {
 
     /// :rtype: int
     #[getter]
-    pub fn output(&self) -> u128 {
+    pub fn output(&self) -> u32 {
         self.0.output
     }
 }

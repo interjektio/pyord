@@ -1,19 +1,21 @@
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
-use ord::runes::Runestone;
+use ordinals::Artifact;
+use ordinals::Runestone;
 
 use crate::utils::hex_to_bitcoin_tx;
 
 use super::edict::PyEdict;
 use super::etching::PyEtching;
+use super::rune_id::PyRuneId;
+use super::cenotaph::PyCenotaph;
 
 /// Runestone
-/// :type burn: bool, optional
-/// :type claim: typing.Optional[int], optional
-/// :type default_output: typing.Optional[int], optional
-/// :type edicts: typing.Iterable[Edict], optional
+/// :type edicts: typing.Optional[typing.Iterable[Edict]], optional
 /// :type etching: typing.Optional[Etching], optional
+/// :type mint: typing.Optional[RuneId], optional
+/// :type pointer: typing.Optional[int], optional
 #[pyclass(name="Runestone")]
 #[derive(Debug, PartialEq)]
 pub struct PyRunestone(pub Runestone);
@@ -22,36 +24,41 @@ pub struct PyRunestone(pub Runestone);
 #[pymethods]
 impl PyRunestone {
     #[new]
-    #[pyo3(text_signature = "(burn=False, edicts=(), claim=None, default_output=None, etching=None)")]
+    #[pyo3(signature = (edicts=None, etching=None, mint=None, pointer=None))]
     pub fn new(
-        burn: Option<bool>,
         edicts: Option<Vec<PyEdict>>,
-        claim: Option<u128>,
-        default_output: Option<u32>,
         etching: Option<PyEtching>,
+        mint: Option<PyRuneId>,
+        pointer: Option<u32>,
     ) -> Self {
         PyRunestone(Runestone {
-            burn: burn.unwrap_or(false),
-            claim,
-            default_output,
             edicts: edicts.unwrap_or_default().into_iter().map(|e| e.0).collect(),
             etching: etching.map(|e| e.0),
+            mint: mint.map(|m| m.0),
+            pointer,
         })
     }
 
-    /// Return a Runestone from a Bitcoin transaction, or None if the transaction contains no
-    /// Runestone
+    /// Return a Runestone or Cenotaph from a Bitcoin transaction, or None if the transaction
+    /// contains no Runestone
     /// :type hex_tx: str
-    /// :rtype: typing.Optional[Runestone]
+    /// :rtype: typing.Union[Runestone, Cenotaph, None]
     #[staticmethod]
-    pub fn from_hex_tx(hex_tx: &str) -> PyResult<Option<Self>> {
+    pub fn decipher_hex(py: Python, hex_tx: &str) -> PyResult<Option<PyObject>> {
         let tx = hex_to_bitcoin_tx(hex_tx)?;
-        Ok(Runestone::from_transaction(&tx).map(|r| PyRunestone(r)))
+        let result = Runestone::decipher(&tx);
+        match result {
+            None => Ok(None),
+            Some(artifact) => match artifact {
+                Artifact::Cenotaph(cenotaph) => Ok(Some(PyCenotaph(cenotaph).into_py(py))),
+                Artifact::Runestone(runestone) => Ok(Some(PyRunestone(runestone).into_py(py))),
+            },
+        }
     }
 
     /// get the scriptPubKey of the Runestone
     /// :rtype: bytes
-    pub fn script_pubkey(&self, py: Python) -> PyObject {
+    pub fn encipher(&self, py: Python) -> PyObject {
         let buffer = self.0.encipher().into_bytes();
         // TODO: check that this doesn't leak memory
         PyBytes::new(py, &buffer).into()
@@ -59,14 +66,14 @@ impl PyRunestone {
 
     pub fn __repr__(&self) -> String {
         format!(
-            "Runestone(burn={}, claim={}, default_output={}, edicts={})",
-            self.burn(),
-            self.claim().map(|d| d.to_string()).unwrap_or("None".to_string()),
-            self.default_output().map(|d| d.to_string()).unwrap_or("None".to_string()),
+            "Runestone(edicts={}, etching={}, mint={}, pointer={})",
             format!(
                 "[{}]",
                 self.edicts().iter().map(|e| e.__repr__()).collect::<Vec<String>>().join(", ")
             ),
+            self.etching().map(|e| e.__repr__()).unwrap_or("None".to_string()),
+            self.mint().map(|m| m.__repr__()).unwrap_or("None".to_string()),
+            self.pointer().map(|i| i.to_string()).unwrap_or("None".to_string()),
         )
     }
 
@@ -74,22 +81,10 @@ impl PyRunestone {
         self.0 == other.0
     }
 
-    /// :rtype: bool
+    /// :rtype: typing.Optional[Etching]
     #[getter]
-    pub fn burn(&self) -> bool {
-        self.0.burn
-    }
-
-    /// :rtype: typing.Optional[int]
-    #[getter]
-    pub fn claim(&self) -> Option<u128> {
-        self.0.claim
-    }
-
-    /// :rtype: typing.Optional[int]
-    #[getter]
-    pub fn default_output(&self) -> Option<u32> {
-        self.0.default_output
+    pub fn etching(&self) -> Option<PyEtching> {
+        self.0.etching.map(|e| PyEtching(e))
     }
 
     /// :rtype: typing.List[Edict]
@@ -98,9 +93,21 @@ impl PyRunestone {
         self.0.edicts.iter().map(|e| PyEdict(*e)).collect()
     }
 
-    /// :rtype: typing.Optional[Etching]
+    /// :rtype: typing.Optional[RuneId]
     #[getter]
-    pub fn etching(&self) -> Option<PyEtching> {
-        self.0.etching.map(|e| PyEtching(e))
+    pub fn mint(&self) -> Option<PyRuneId> {
+        self.0.mint.map(|m| PyRuneId(m))
+    }
+
+    /// :rtype: typing.Optional[int]
+    #[getter]
+    pub fn pointer(&self) -> Option<u32> {
+        self.0.pointer
+    }
+
+    /// :rtype: bool
+    #[getter]
+    pub fn is_cenotaph(&self) -> bool {
+        false
     }
 }

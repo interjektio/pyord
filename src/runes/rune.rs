@@ -1,10 +1,10 @@
 use pyo3::prelude::*;
 
-use ord::runes::Rune;
+use ordinals::Rune;
 
 /// Rune
-/// :param num: The rune number
-/// :type num: int
+/// :param n: The rune number
+/// :type n: int
 #[pyclass(name="Rune")]
 #[derive(Debug, PartialEq, Copy, Clone, PartialOrd, Ord, Eq)]
 pub struct PyRune(pub Rune);
@@ -13,18 +13,18 @@ pub struct PyRune(pub Rune);
 #[pymethods]
 impl PyRune {
     #[new]
-    pub fn new(num: u128) -> Self {
-        PyRune(Rune(num))
+    pub fn new(n: u128) -> Self {
+        PyRune(Rune(n))
     }
 
     /// the number (id) of the rune
     /// :rtype: int
     #[getter]
-    pub fn num(&self) -> u128 {
+    pub fn n(&self) -> u128 {
         self.0 .0
     }
 
-    /// the name of the rune as string
+    /// the name of the rune as a string
     /// :rtype: str
     #[getter]
     pub fn name(&self) -> String {
@@ -32,7 +32,7 @@ impl PyRune {
     }
 
     pub fn __repr__(&self) -> String {
-        format!("Rune(num={}, name='{}')", self.num(), self.name())
+        format!("Rune(n={}, name='{}')", self.n(), self.name())
     }
 
     /// convert the string representation of the rune to a rune

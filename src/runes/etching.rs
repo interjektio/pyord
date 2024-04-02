@@ -1,14 +1,15 @@
 use pyo3::prelude::*;
-use ord::runes::Etching;
+use ordinals::Etching;
 
-use super::mint::PyMint;
+use super::terms::PyTerms;
 use super::rune::PyRune;
 
-/// :type divisibility: int
-/// :type mint: typing.Optional[Mint], optional
+/// :type divisibility: typing.Optional[int], optional
+/// :type premine: typing.Optional[int], optional
 /// :type rune: typing.Optional[Rune], optional
-/// :type spacers: int
+/// :type spacers: typing.Optional[int], optional
 /// :type symbol: typing.Optional[str], optional
+/// :type terms: typing.Optional[Terms], optional
 #[pyclass(name="Etching")]
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PyEtching(pub Etching);
@@ -17,42 +18,45 @@ pub struct PyEtching(pub Etching);
 impl PyEtching {
     #[new]
     pub fn new(
-        divisibility: u8,
-        spacers: u32,
-        mint: Option<PyMint>,
+        divisibility: Option<u8>,
+        premine: Option<u128>,
         rune: Option<PyRune>,
+        spacers: Option<u32>,
         symbol: Option<char>,
+        terms: Option<PyTerms>,
     ) -> Self {
         Self(Etching {
             divisibility,
-            mint: mint.map(|m| m.0),
+            premine,
             rune: rune.map(|r| r.0),
             spacers,
             symbol,
+            terms: terms.map(|m| m.0),
         })
     }
 
     pub fn __repr__(&self) -> String {
         format!(
-            "Etching(divisibility={}, mint={}, rune={}, spacers={}, symbol={})",
-            self.divisibility(),
-            self.mint().map(|m| m.__repr__()).unwrap_or("None".to_string()),
+            "Etching(divisibility={}, premine={}, rune={}, spacers={}, symbol={}, terms={})",
+            self.divisibility().map(|i| i.to_string()).unwrap_or("None".to_string()),
+            self.premine().map(|i| i.to_string()).unwrap_or("None".to_string()),
             self.rune().map(|r| r.__repr__()).unwrap_or("None".to_string()),
-            self.spacers(),
+            self.spacers().map(|i| i.to_string()).unwrap_or("None".to_string()),
             self.symbol().map(|s| format!("'{}'", s.to_string())).unwrap_or("None".to_string()),
+            self.terms().map(|m| m.__repr__()).unwrap_or("None".to_string()),
         )
     }
 
-    /// :rtype: int
+    /// :rtype: typing.Optional[int]
     #[getter]
-    pub fn divisibility(&self) -> u8 {
+    pub fn divisibility(&self) -> Option<u8> {
         self.0.divisibility
     }
 
-    /// :rtype: typing.Optional[Mint]
+    /// :rtype: typing.Optional[int]
     #[getter]
-    pub fn mint(&self) -> Option<PyMint> {
-        self.0.mint.map(|m| PyMint(m))
+    pub fn premine(&self) -> Option<u128> {
+        self.0.premine
     }
 
     /// :rtype: typing.Optional[Rune]
@@ -63,7 +67,7 @@ impl PyEtching {
 
     /// :rtype: int
     #[getter]
-    pub fn spacers(&self) -> u32 {
+    pub fn spacers(&self) -> Option<u32> {
         self.0.spacers
     }
 
@@ -71,5 +75,11 @@ impl PyEtching {
     #[getter]
     pub fn symbol(&self) -> Option<char> {
         self.0.symbol
+    }
+
+    /// :rtype: typing.Optional[Terms]
+    #[getter]
+    pub fn terms(&self) -> Option<PyTerms> {
+        self.0.terms.map(|m| PyTerms(m))
     }
 }

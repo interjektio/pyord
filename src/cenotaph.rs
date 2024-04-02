@@ -1,5 +1,6 @@
-use ordinals::Cenotaph;
 use pyo3::prelude::*;
+
+use ordinals::Cenotaph;
 
 use super::flaw::PyFlaw;
 use super::rune::PyRune;

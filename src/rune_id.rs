@@ -1,7 +1,7 @@
 use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
 
-use ordinals::{RuneId};
+use ordinals::RuneId;
 
 /// RuneId
 /// :param block: Etching block height

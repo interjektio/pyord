@@ -33,9 +33,15 @@ $(PYTHON):
 	$(PYTHON) -m pip install -e '.[dev]'
 
 .PHONY: build-linux-wheels
-build-linux-wheels:
+build-linux-wheels: build-builder-docker-image
 	docker run --rm -it -v $(shell pwd):/io $(shell docker build -q -f Dockerfile.build .) build --release
 
 .PHONY: publish-linux-wheels
-publish-linux-wheels:
+publish-linux-wheels: build-builder-docker-image
 	docker run --rm -it -v $(shell pwd):/io $(shell docker build -q -f Dockerfile.build .) publish
+
+.PHONY: build-builder-docker-image
+build-builder-docker-image:
+	@# This is redundant, but building this takes such a long time that it's nice to get some output
+	@# from the process, which doesn't happen when it's built with the -q flag
+	docker build -f Dockerfile.build .

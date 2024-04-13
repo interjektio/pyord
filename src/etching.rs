@@ -24,6 +24,7 @@ impl PyEtching {
         spacers: Option<u32>,
         symbol: Option<char>,
         terms: Option<PyTerms>,
+        turbo: Option<bool>,
     ) -> Self {
         Self(Etching {
             divisibility,
@@ -32,18 +33,20 @@ impl PyEtching {
             spacers,
             symbol,
             terms: terms.map(|m| m.0),
+            turbo: turbo.unwrap_or(false),
         })
     }
 
     pub fn __repr__(&self) -> String {
         format!(
-            "Etching(divisibility={}, premine={}, rune={}, spacers={}, symbol={}, terms={})",
+            "Etching(divisibility={}, premine={}, rune={}, spacers={}, symbol={}, terms={}, turbo={})",
             self.divisibility().map(|i| i.to_string()).unwrap_or("None".to_string()),
             self.premine().map(|i| i.to_string()).unwrap_or("None".to_string()),
             self.rune().map(|r| r.__repr__()).unwrap_or("None".to_string()),
             self.spacers().map(|i| i.to_string()).unwrap_or("None".to_string()),
             self.symbol().map(|s| format!("'{}'", s.to_string())).unwrap_or("None".to_string()),
             self.terms().map(|m| m.__repr__()).unwrap_or("None".to_string()),
+            if self.turbo() { "True" } else { "False" },
         )
     }
 
@@ -81,5 +84,11 @@ impl PyEtching {
     #[getter]
     pub fn terms(&self) -> Option<PyTerms> {
         self.0.terms.map(|m| PyTerms(m))
+    }
+
+    /// :rtype: bool
+    #[getter]
+    pub fn turbo(&self) -> bool {
+        self.0.turbo
     }
 }

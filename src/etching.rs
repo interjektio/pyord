@@ -10,6 +10,7 @@ use super::rune::PyRune;
 /// :type spacers: typing.Optional[int]
 /// :type symbol: typing.Optional[str]
 /// :type terms: typing.Optional[Terms]
+/// :type turbo: typing.Optional[bool]
 #[pyclass(name="Etching")]
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PyEtching(pub Etching);

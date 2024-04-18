@@ -101,6 +101,5 @@ def test_decipher_hex_cenotaph():
     runestone_or_cenotaph = Runestone.decipher_hex(tx_hex)
     assert isinstance(runestone_or_cenotaph, Cenotaph)
     assert runestone_or_cenotaph.is_cenotaph
-    assert len(runestone_or_cenotaph.flaws) == 1
-    assert runestone_or_cenotaph.flaws[0].reason == "edict output greater than transaction output count"
+    assert runestone_or_cenotaph.flaw.reason == "edict output greater than transaction output count"
     assert runestone != runestone_or_cenotaph

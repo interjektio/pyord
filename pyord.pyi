@@ -4,11 +4,11 @@ import typing
 class Cenotaph:
     """Cenotaph"""
     etching: typing.Optional[Rune]
-    flaws: list[Flaw]
+    flaw: typing.Optional[Flaw]
     is_cenotaph: bool
     mint: typing.Optional[RuneId]
 
-    def __init__(self, /, flaws: list[Flaw], etching: typing.Optional[Rune]=None, mint: typing.Optional[RuneId]=None) -> None:
+    def __init__(self, /, etching: typing.Optional[Rune]=None, flaw: typing.Optional[Flaw]=None, mint: typing.Optional[RuneId]=None) -> None:
         """Cenotaph"""
 
     def __eq__(self, value: typing.Any, /) -> bool:
@@ -51,8 +51,9 @@ class Etching:
     spacers: int
     symbol: typing.Optional[str]
     terms: typing.Optional[Terms]
+    turbo: bool
 
-    def __init__(self, /, divisibility: typing.Optional[int]=None, premine: typing.Optional[int]=None, rune: typing.Optional[Rune]=None, spacers: typing.Optional[int]=None, symbol: typing.Optional[str]=None, terms: typing.Optional[Terms]=None) -> None:...
+    def __init__(self, /, divisibility: typing.Optional[int]=None, premine: typing.Optional[int]=None, rune: typing.Optional[Rune]=None, spacers: typing.Optional[int]=None, symbol: typing.Optional[str]=None, terms: typing.Optional[Terms]=None, turbo: typing.Optional[bool]=None) -> None:...
 
     def __repr__(self, /) -> str:
         """Return repr(self)."""
@@ -61,7 +62,6 @@ class Etching:
 class Flaw:
     """A Flaw in a Runestone that makes it a Cenotaph
 :param n: Flaw as integer"""
-    flag: int
     reason: str
 
     def __init__(self, /, n: int) -> None:

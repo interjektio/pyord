@@ -18,16 +18,15 @@ pub struct PyCenotaph(pub Cenotaph);
 #[pymethods]
 impl PyCenotaph {
     #[new]
-    #[pyo3(signature = (flaws, etching=None, mint=None))]
+    #[pyo3(signature = (etching=None, flaw=None, mint=None))]
     pub fn new(
-        flaws: Vec<PyFlaw>,
         etching: Option<PyRune>,
+        flaw: Option<PyFlaw>,
         mint: Option<PyRuneId>,
     ) -> Self {
-        let flaw_bitmask = flaws.iter().fold(0, |acc, f| acc | f.0.flag());
         Self(Cenotaph {
             etching: etching.map(|e| e.0),
-            flaws: flaw_bitmask,
+            flaw: flaw.map(|e| e.0),
             mint: mint.map(|m| m.0),
         })
     }
@@ -40,11 +39,9 @@ impl PyCenotaph {
     pub fn __repr__(&self) -> String {
         format!(
             "Cenotaph(flaws={}, etching={}, mint={})",
-            self.flaws()
-                .iter()
+            self.flaw()
                 .map(|f| f.__repr__())
-                .collect::<Vec<String>>()
-                .join(", "),
+                .unwrap_or_else(|| "None".to_string()),
             self.etching()
                 .map(|e| e.__repr__())
                 .unwrap_or_else(|| "None".to_string()),
@@ -54,10 +51,10 @@ impl PyCenotaph {
         )
     }
 
-    /// :rtype: list[Flaw]
+    /// :rtype: typing.Optional[Flaw]
     #[getter]
-    pub fn flaws(&self) -> Vec<PyFlaw> {
-        self.0.flaws().iter().map(|flaw| PyFlaw(*flaw)).collect()
+    pub fn flaw(&self) -> Option<PyFlaw> {
+        self.0.flaw.map(|f| PyFlaw(f))
     }
 
     /// :rtype: typing.Optional[Rune]

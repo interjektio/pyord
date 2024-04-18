@@ -338,9 +338,9 @@ checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
 name = "ordinals"
-version = "0.0.7"
+version = "0.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6f3b2919fe8ffd6aa09ac72138fd031527f9d57ddb0a01baf8725f13d798598"
+checksum = "f69dc8f090e996b63e1f96972f0d619f497c9545464c7bddf65e42d38576b3f3"
 dependencies = [
  "bitcoin",
  "derive_more",

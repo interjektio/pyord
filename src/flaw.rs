@@ -11,13 +11,27 @@ use ordinals::Flaw;
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PyFlaw(pub Flaw);
 
+const ALL_FLAWS: [Flaw; 10] = [
+    Flaw::EdictOutput,
+    Flaw::EdictRuneId,
+    Flaw::InvalidScript,
+    Flaw::Opcode,
+    Flaw::SupplyOverflow,
+    Flaw::TrailingIntegers,
+    Flaw::TruncatedField,
+    Flaw::UnrecognizedEvenTag,
+    Flaw::UnrecognizedFlag,
+    Flaw::Varint,
+];
+
+
 #[pymethods]
 impl PyFlaw {
     #[new]
     pub fn new(
         n: u32,
     ) -> PyResult<Self> {
-        for flaw in Flaw::ALL.into_iter() {
+        for flaw in ALL_FLAWS.into_iter() {
             if flaw as u32 == n {
                 return Ok(Self(flaw));
             }
@@ -28,7 +42,7 @@ impl PyFlaw {
     /// :rtype: list[Flaw]
     #[staticmethod]
     pub fn all() -> Vec<Self> {
-        Flaw::ALL.into_iter().map(|flaw| Self(flaw)).collect()
+        ALL_FLAWS.into_iter().map(|flaw| Self(flaw)).collect()
     }
 
     pub fn __eq__(&self, other: &PyFlaw) -> bool {
@@ -36,17 +50,11 @@ impl PyFlaw {
     }
 
     pub fn __repr__(&self) -> String {
-        format!("Flaw(n={}, reason='{}')", self.__int__(), self.reason())
+        format!("Flaw(value={}, reason='{}')", self.__int__(), self.reason())
     }
 
     pub fn __int__(&self) -> u32 {
         self.0 as u32
-    }
-
-    /// :rtype: int
-    #[getter]
-    pub fn flag(&self) -> u32 {
-        self.0.flag()
     }
 
     /// :rtype: str

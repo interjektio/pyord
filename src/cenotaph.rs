@@ -7,8 +7,8 @@ use super::rune::PyRune;
 use super::rune_id::PyRuneId;
 
 /// Cenotaph
-/// :type flaws: list[Flaw]
 /// :type etching: typing.Optional[Rune]
+/// :type flaw: typing.Optional[Flaw]
 /// :type mint: typing.Optional[RuneId]
 #[pyclass(name="Cenotaph")]
 #[derive(Debug, PartialEq)]

@@ -73,8 +73,6 @@ jobs:
         with:
           python-version: '3.10'
 
-      - run: make patch-ord
-
       - uses: docker/login-action@v2
         with:
           registry: ghcr.io
